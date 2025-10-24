@@ -1,7 +1,13 @@
+// src/views/KanbanView.vue
 <script setup>
+import { ref } from 'vue'
 import KanbanCard from '../components/kanban-card/KanbanCard.vue'
+import TaskEditModal from '../components/task-edition-modal/TaskEditModal.vue'
 
-const exampleTasks = [
+const showEditModal = ref(false)
+const selectedTask = ref(null)
+
+const exampleTasks = ref([
   {
     id: 1,
     title: 'Diseñar landing page',
@@ -66,7 +72,19 @@ const exampleTasks = [
     tag: 'Maintenance',
     status: 'completada',
   },
-]
+])
+
+function handleEdit(task) {
+  selectedTask.value = { ...task }
+  showEditModal.value = true
+}
+
+function updateTask(updatedTask) {
+  const index = exampleTasks.value.findIndex((t) => t.id === updatedTask.id)
+  if (index !== -1) {
+    exampleTasks.value[index] = { ...updatedTask }
+  }
+}
 </script>
 
 <template>
@@ -87,16 +105,19 @@ const exampleTasks = [
         :created-at="task.createdAt"
         :tag="task.tag"
         :status="task.status"
+        @edit="handleEdit(task)"
       />
     </div>
+
+    <TaskEditModal v-model="showEditModal" :taskData="selectedTask" @save="updateTask" />
   </div>
 </template>
 
 <style scoped>
 .task-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
   min-height: 80vh;
 }
 </style>

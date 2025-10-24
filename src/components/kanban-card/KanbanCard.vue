@@ -1,26 +1,37 @@
 <template>
-  <div class="bg-white border rounded shadow-sm p-3 d-flex flex-column" style="min-height: 180px">
+  <div
+    ref="cardRef"
+    class="bg-white border rounded shadow-sm p-3 d-flex flex-column position-relative"
+    style="min-height: 180px"
+  >
     <!-- Header: título + dropdown -->
     <div class="d-flex justify-content-between align-items-start mb-2">
       <div>
         <h6 class="mb-1">{{ title }}</h6>
       </div>
 
-      <div class="dropdown">
-        <button
-          class="btn btn-sm btn-light"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
+      <!-- Custom Dropdown -->
+      <div class="position-relative">
+        <button class="btn btn-sm btn-light" type="button" @click.stop="toggleDropdown">
           <i class="bi bi-three-dots-vertical"></i>
         </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><button class="dropdown-item" @click="$emit('edit')">Edit</button></li>
-          <li>
-            <button class="dropdown-item text-danger" @click="$emit('delete')">Delete</button>
-          </li>
-        </ul>
+
+        <div
+          v-if="openDropdown"
+          class="position-absolute bg-white border rounded shadow-sm"
+          style="right: 0; z-index: 10; min-width: 120px"
+        >
+          <button class="dropdown-item w-100 m-2 text-start" type="button" @click="handleEdit">
+            Edit
+          </button>
+          <button
+            class="dropdown-item w-100 m-2 text-start text-danger"
+            type="button"
+            @click="handleDelete"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
 
@@ -31,7 +42,7 @@
     <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
       <small class="text-muted"><i class="bi bi-calendar me-1"></i>{{ createdAt }}</small>
       <div>
-        <span class="badge" :class="statusClassMap[status]" style="font-size: 0.7rem">
+        <span class="badge me-1" :class="statusClassMap[status]" style="font-size: 0.7rem">
           {{ status }}
         </span>
         <span class="badge bg-light text-dark border" style="font-size: 0.75rem">{{ tag }}</span>
@@ -41,6 +52,8 @@
 </template>
 
 <script setup>
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
 defineProps({
   title: String,
   description: String,
@@ -49,11 +62,43 @@ defineProps({
   status: String,
 })
 
-defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete'])
+
+const openDropdown = ref(false)
+const cardRef = ref(null)
 
 const statusClassMap = {
   completada: 'bg-success text-white',
   pendiente: 'bg-warning text-dark',
   bloqueada: 'bg-danger text-white',
 }
+
+const toggleDropdown = () => {
+  openDropdown.value = !openDropdown.value
+}
+
+const handleEdit = () => {
+  openDropdown.value = false
+  emit('edit')
+}
+
+const handleDelete = () => {
+  openDropdown.value = false
+  emit('delete')
+}
+
+const handleClickOutside = (event) => {
+  if (!openDropdown.value) return
+  if (cardRef.value && !cardRef.value.contains(event.target)) {
+    openDropdown.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>

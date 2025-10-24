@@ -1,111 +1,101 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-    <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%">
-      <h3 class="text-center mb-1">Welcome</h3>
-
-      <form @submit.prevent="handleSubmit" novalidate>
-        <div class="mb-3">
-          <label for="email" class="form-label">Username</label>
-          <input
-            type="email"
-            id="email"
-            class="form-control"
-            v-model="email"
-            :class="{ 'is-invalid': touched.email && errors.email }"
-            @blur="validateEmail()"
-            @input="validateEmail(false)"
-          />
-          <div v-if="touched.email && errors.email" class="invalid-feedback">
-            {{ errors.email }}
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <div class="input-group">
-            <input
-              :type="showPassword ? 'text' : 'password'"
-              id="password"
-              class="form-control"
-              v-model="password"
-              :class="{ 'is-invalid': touched.password && errors.password }"
-              @blur="validatePassword()"
-              @input="validatePassword(false)"
-            />
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click="togglePasswordVisibility"
-              :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-            >
-              <svg
-                v-if="showPassword"
-                width="1.25em"
-                height="1.25em"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="3"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                />
-                <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-              </svg>
-              <svg
-                v-else
-                width="1.25em"
-                height="1.25em"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 3 21 21"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M6.5 6.842c-2.333 1.73-3.95 4.158-4.5 5.158 0 0 4 7 10 7 2.333 0 4.336-.877 6-2.023M14.538 14.577A3.5 3.5 0 0 1 9.423 9.462"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M11.8 6.04A9.744 9.744 0 0 1 12 5c6 0 10 7 10 7a22.815 22.815 0 0 1-2.815 3.61"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-          <div v-if="touched.password && errors.password" class="invalid-feedback d-block">
-            {{ errors.password }}
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <a href="#" class="text-decoration-none">Forgot Password ?</a>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Sign In</button>
-      </form>
+  <div class="card border-0 shadow-lg rounded-4 p-4 p-lg-5">
+    <div class="mb-4">
+      <h2 class="fw-bold mb-1">Welcome/Bienvenido</h2>
     </div>
+
+    <form @submit.prevent="handleSubmit" novalidate>
+      <div class="mb-3">
+        <label for="email" class="form-label fw-semibold">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control form-control-lg"
+          v-model="email"
+          :class="{ 'is-invalid': touched.email && errors.email }"
+          @blur="validateEmail()"
+          @input="validateEmail(false)"
+        />
+        <div v-if="touched.email && errors.email" class="invalid-feedback d-block">
+          {{ errors.email }}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label fw-semibold">Password</label>
+        <div class="input-group">
+          <input
+            :type="showPassword ? 'text' : 'password'"
+            id="password"
+            class="form-control form-control-lg"
+            v-model="password"
+            :class="{ 'is-invalid': touched.password && errors.password }"
+            @blur="validatePassword()"
+            @input="validatePassword(false)"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary border-start-0"
+            @click="togglePasswordVisibility"
+            :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <svg
+              v-if="showPassword"
+              width="1.25em"
+              height="1.25em"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+            </svg>
+            <svg
+              v-else
+              width="1.25em"
+              height="1.25em"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 3 21 21"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M6.5 6.842c-2.333 1.73-3.95 4.158-4.5 5.158 0 0 4 7 10 7 2.333 0 4.336-.877 6-2.023M14.538 14.577A3.5 3.5 0 0 1 9.423 9.462"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M11.8 6.04A9.744 9.744 0 0 1 12 5c6 0 10 7 10 7a22.815 22.815 0 0 1-2.815 3.61"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div v-if="touched.password && errors.password" class="invalid-feedback d-block">
+          {{ errors.password }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Sign In</button>
+    </form>
   </div>
 </template>
 
@@ -173,8 +163,3 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 </script>
-<style scoped>
-.card {
-  border-radius: 1rem;
-}
-</style>

@@ -43,7 +43,7 @@
       <small class="text-muted"><i class="bi bi-calendar me-1"></i>{{ createdAt }}</small>
       <div>
         <span class="badge me-1" :class="statusClassMap[status]" style="font-size: 0.7rem">
-          {{ status }}
+          {{ statusLabel }}
         </span>
         <span class="badge bg-light text-dark border" style="font-size: 0.75rem">{{ tag }}</span>
       </div>
@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps({
   id: [Number, String],
@@ -73,6 +73,15 @@ const statusClassMap = {
   pendiente: 'bg-warning text-dark',
   bloqueada: 'bg-danger text-white',
 }
+
+const statusLabelMap = {
+  completada: 'Completada',
+  pendiente: 'Pendiente',
+  bloqueada: 'En proceso',
+  'en proceso': 'En proceso',
+}
+
+const statusLabel = computed(() => statusLabelMap[props.status] || props.status)
 
 const toggleDropdown = () => {
   openDropdown.value = !openDropdown.value

@@ -13,3 +13,8 @@ export async function fetchTasks() {
 export async function deleteTask(id) {
     return await api.delete(`/api/tasks/${id}`)
 }
+
+export async function createTask(task) {
+    const response = await api.post('/api/tasks', task)
+    return response.data
+}

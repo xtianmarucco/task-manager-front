@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Edit Task</h5>
+          <h5 class="modal-title">{{ isEditMode ? 'Editar tarea' : 'Nueva tarea' }}</h5>
           <button
             type="button"
             class="btn-close"
@@ -14,14 +14,14 @@
         </div>
 
         <div class="modal-body">
-          <form @submit.prevent="handleSave">
+          <form @submit.prevent="handleSubmit">
             <div class="mb-3">
-              <label class="form-label">Title</label>
+              <label class="form-label">Título</label>
               <input type="text" class="form-control" v-model="task.title" required />
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Description</label>
+              <label class="form-label">Descripción</label>
               <textarea class="form-control" rows="3" v-model="task.description"></textarea>
             </div>
 
@@ -37,18 +37,20 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Status</label>
+              <label class="form-label">Estado</label>
               <select class="form-select" v-model="task.status">
                 <option value="pendiente">Pendiente</option>
                 <option value="completada">Completada</option>
-                <option value="bloqueada">Bloqueada</option>
+                <option value="bloqueada">En proceso</option>
               </select>
             </div>
 
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="submit" class="btn btn-primary">
+                {{ isEditMode ? 'Guardar cambios' : 'Crear tarea' }}
+              </button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                Cancel
+                Cancelar
               </button>
             </div>
           </form>
@@ -59,29 +61,36 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
   modelValue: Boolean,
   taskData: Object,
 })
-const emit = defineEmits(['update:modelValue', 'save'])
+const emit = defineEmits(['update:modelValue', 'save', 'create'])
 
 const modal = ref(null)
 let instance = null
 
-const task = ref({ ...props.taskData })
+const task = ref({})
+
+const isEditMode = computed(() => !!task.value.id)
 
 watch(
   () => props.taskData,
   (newTask) => {
     task.value = { ...newTask }
   },
+  { immediate: true },
 )
 
-function handleSave() {
-  emit('save', { ...task.value })
+function handleSubmit() {
+  if (isEditMode.value) {
+    emit('save', { ...task.value })
+  } else {
+    emit('create', { ...task.value })
+  }
   instance.hide()
 }
 

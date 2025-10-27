@@ -6,7 +6,7 @@ import TaskEditModal from '../components/task-edition-modal/TaskEditModal.vue'
 import LoaderSpinner from '../components/loader-spinner/LoaderSpinner.vue'
 import ConfirmModal from '../components/confirm-modal/ConfirmModal.vue'
 import ToastNotification from '../components/toast-notification/ToastNotification.vue'
-import { fetchTasks, deleteTask } from '../services/TaskService'
+import { fetchTasks, deleteTask, createTask } from '../services/TaskService'
 
 const showEditModal = ref(false)
 const selectedTask = ref(null)
@@ -17,6 +17,11 @@ const tasks = ref([])
 const loading = ref(false)
 const error = ref(null)
 
+// create task modal control (will be used later)
+const showCreateModal = ref(false)
+function openCreateModal() {
+  showCreateModal.value = true
+}
 const toast = ref({ visible: false, message: '', type: 'success' })
 
 const deleteMessage = computed(() =>
@@ -44,6 +49,19 @@ function updateTask(updatedTask) {
     tasks.value[index] = { ...updatedTask }
     showToast('Tarea actualizada exitosamente')
   }
+}
+
+function handleCreate(newTask) {
+  createTask(newTask)
+    .then((createdTask) => {
+      tasks.value.unshift(createdTask)
+      showToast('Tarea creada exitosamente')
+      showCreateModal.value = false
+    })
+    .catch((err) => {
+      console.error('❌ Error al crear tarea:', err)
+      showToast('No se pudo crear la tarea', 'error')
+    })
 }
 
 function requestDelete(taskId) {
@@ -102,6 +120,20 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- Action bar: create button and future filters/search -->
+    <div class="d-flex justify-content-start align-items-center mb-4">
+      <div class="d-flex gap-2 align-items-center">
+        <!-- placeholder for future filters (dropdown, search input) -->
+      </div>
+
+      <div>
+        <button class="btn btn-primary" @click="openCreateModal">
+          <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>
+          Crear tarea
+        </button>
+      </div>
+    </div>
+
     <div v-if="loading">
       <LoaderSpinner />
     </div>
@@ -131,6 +163,12 @@ onMounted(() => {
     </div>
 
     <TaskEditModal v-model="showEditModal" :taskData="selectedTask" @save="updateTask" />
+
+    <TaskEditModal
+      v-model="showCreateModal"
+      :taskData="{ title: '', description: '', tag: 'Design', status: 'pendiente' }"
+      @create="handleCreate"
+    />
 
     <ConfirmModal
       v-if="showDeleteModal"

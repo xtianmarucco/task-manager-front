@@ -9,3 +9,7 @@ export async function fetchTasks() {
     const response = await api.get('/api/tasks')
     return response.data
 }
+
+export async function deleteTask(id) {
+    return await api.delete(`/api/tasks/${id}`)
+}

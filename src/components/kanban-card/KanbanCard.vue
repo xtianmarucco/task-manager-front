@@ -54,7 +54,8 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-defineProps({
+const props = defineProps({
+  id: [Number, String],
   title: String,
   description: String,
   createdAt: String,
@@ -84,7 +85,7 @@ const handleEdit = () => {
 
 const handleDelete = () => {
   openDropdown.value = false
-  emit('delete')
+  emit('delete', props.id)
 }
 
 const handleClickOutside = (event) => {

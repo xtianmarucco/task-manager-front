@@ -142,8 +142,11 @@ onMounted(() => {
         <!-- placeholder for future filters (dropdown, search input) -->
       </div>
 
-      <div>
-        <button class="btn btn-primary" @click="openCreateModal">
+      <div class="d-flex align-items-center gap-3">
+        <button
+          class="btn btn-primary d-flex align-items-center gap-2 text-nowrap"
+          @click="openCreateModal"
+        >
           <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>
           Crear tarea
         </button>
@@ -184,7 +187,7 @@ onMounted(() => {
 
     <TaskEditModal
       v-model="showCreateModal"
-      :taskData="{ title: '', description: '', tag: 'Design', status: 'pendiente' }"
+      :taskData="{ title: '', description: '', tag: 'Design', status: 'pendiente', dueDate: '' }"
       @create="handleCreate"
     />
 

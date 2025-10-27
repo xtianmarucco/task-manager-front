@@ -40,7 +40,7 @@
 
     <!-- Footer fijo abajo -->
     <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
-      <small class="text-muted"><i class="bi bi-calendar me-1"></i>{{ createdAt }}</small>
+      <small class="text-muted"><i class="bi bi-calendar me-1"></i>{{ dueDate }}</small>
       <div>
         <span class="badge me-1" :class="statusClassMap[status]" style="font-size: 0.7rem">
           {{ statusLabel }}
@@ -58,7 +58,7 @@ const props = defineProps({
   id: [Number, String],
   title: String,
   description: String,
-  createdAt: String,
+  dueDate: String,
   tag: String,
   status: String,
 })

@@ -45,6 +45,11 @@
               </select>
             </div>
 
+            <div class="mb-3">
+              <label class="form-label">Fecha límite</label>
+              <input type="date" class="form-control" v-model="task.dueDate" />
+            </div>
+
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">
                 {{ isEditMode ? 'Guardar cambios' : 'Crear tarea' }}
@@ -77,19 +82,46 @@ const task = ref({})
 
 const isEditMode = computed(() => !!task.value.id)
 
+const formatDateForInput = (value) => {
+  if (!value) return ''
+
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10)
+}
+
+const normalizeTask = (rawTask = {}) => {
+  const mergedTask = {
+    title: '',
+    description: '',
+    tag: 'Design',
+    status: 'pendiente',
+    dueDate: '',
+    ...rawTask,
+  }
+
+  mergedTask.dueDate = formatDateForInput(rawTask?.dueDate ?? '')
+
+  return mergedTask
+}
+
 watch(
   () => props.taskData,
   (newTask) => {
-    task.value = { ...newTask }
+    task.value = normalizeTask(newTask)
   },
   { immediate: true },
 )
 
 function handleSubmit() {
+  const payload = {
+    ...task.value,
+    dueDate: task.value.dueDate || null,
+  }
+
   if (isEditMode.value) {
-    emit('save', { ...task.value })
+    emit('save', payload)
   } else {
-    emit('create', { ...task.value })
+    emit('create', payload)
   }
   instance.hide()
 }

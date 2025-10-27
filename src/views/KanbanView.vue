@@ -1,78 +1,16 @@
 // src/views/KanbanView.vue
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import KanbanCard from '../components/kanban-card/KanbanCard.vue'
 import TaskEditModal from '../components/task-edition-modal/TaskEditModal.vue'
+import LoaderSpinner from '../components/loader-spinner/LoaderSpinner.vue'
+import { fetchTasks } from '../services/TaskService'
 
 const showEditModal = ref(false)
 const selectedTask = ref(null)
-
-const exampleTasks = ref([
-  {
-    id: 1,
-    title: 'Diseñar landing page',
-    description: 'Crear el layout inicial con Figma y validar con el equipo de UX.',
-    createdAt: '3 días atrás',
-    tag: 'Design',
-    status: 'pendiente',
-  },
-  {
-    id: 2,
-    title: 'Setup de entorno local',
-    description: 'Configurar Docker, Node y base de datos para el proyecto.',
-    createdAt: '2 días atrás',
-    tag: 'Development',
-    status: 'completada',
-  },
-  {
-    id: 3,
-    title: 'Revisión de pull requests',
-    description: 'Revisar y comentar los últimos PR del equipo de frontend.',
-    createdAt: '5 horas atrás',
-    tag: 'Code Review',
-    status: 'pendiente',
-  },
-  {
-    id: 4,
-    title: 'Deploy a staging',
-    description: 'Realizar el deploy de la versión 1.2 en entorno de pruebas.',
-    createdAt: '1 hora atrás',
-    tag: 'DevOps',
-    status: 'completada',
-  },
-  {
-    id: 5,
-    title: 'Integración con API externa',
-    description: 'Conectar con el servicio de terceros y manejar errores.',
-    createdAt: '4 días atrás',
-    tag: 'Backend',
-    status: 'bloqueada',
-  },
-  {
-    id: 6,
-    title: 'Redactar documentación',
-    description: 'Documentar endpoints y flujos de autenticación.',
-    createdAt: '8 horas atrás',
-    tag: 'Docs',
-    status: 'pendiente',
-  },
-  {
-    id: 7,
-    title: 'Test de regresión',
-    description: 'Ejecutar test suite completo antes del deploy.',
-    createdAt: '30 minutos atrás',
-    tag: 'QA',
-    status: 'bloqueada',
-  },
-  {
-    id: 8,
-    title: 'Actualizar dependencias',
-    description: 'Actualizar todas las librerías a sus últimas versiones seguras.',
-    createdAt: 'Ayer',
-    tag: 'Maintenance',
-    status: 'completada',
-  },
-])
+const tasks = ref([])
+const loading = ref(false)
+const error = ref(null)
 
 function handleEdit(task) {
   selectedTask.value = { ...task }
@@ -80,11 +18,32 @@ function handleEdit(task) {
 }
 
 function updateTask(updatedTask) {
-  const index = exampleTasks.value.findIndex((t) => t.id === updatedTask.id)
+  const index = tasks.value.findIndex((t) => t.id === updatedTask.id)
   if (index !== -1) {
-    exampleTasks.value[index] = { ...updatedTask }
+    tasks.value[index] = { ...updatedTask }
   }
 }
+
+console.log(tasks)
+
+async function loadTasks() {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await fetchTasks()
+    console.log('📦 Tareas recibidas:', result)
+    tasks.value = result
+  } catch (err) {
+    console.error('❌ Error al cargar tareas:', err)
+    error.value = 'No se pudieron cargar las tareas.'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  loadTasks()
+})
 </script>
 
 <template>
@@ -96,13 +55,26 @@ function updateTask(updatedTask) {
       </div>
     </div>
 
-    <div class="task-grid">
+    <div v-if="loading">
+      <LoaderSpinner />
+    </div>
+
+    <div v-else-if="error">
+      <div class="alert alert-danger text-center" role="alert">
+        {{ error }}
+        <button class="btn btn-sm btn-outline-secondary ms-3" @click="loadTasks">Reintentar</button>
+      </div>
+    </div>
+
+    <div v-else-if="tasks.length === 0" class="text-center text-muted py-5">No hay tareas aún.</div>
+
+    <div v-else class="task-grid">
       <KanbanCard
-        v-for="task in exampleTasks"
+        v-for="task in tasks"
         :key="task.id"
         :title="task.title"
         :description="task.description"
-        :created-at="task.createdAt"
+        :dueDate="task.dueDate"
         :tag="task.tag"
         :status="task.status"
         @edit="handleEdit(task)"

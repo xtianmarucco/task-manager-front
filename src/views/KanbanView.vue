@@ -5,6 +5,8 @@ import KanbanCard from '../components/kanban-card/KanbanCard.vue'
 import TaskEditModal from '../components/task-edition-modal/TaskEditModal.vue'
 import LoaderSpinner from '../components/loader-spinner/LoaderSpinner.vue'
 import ConfirmModal from '../components/confirm-modal/ConfirmModal.vue'
+import TaskStatusFilter from '@/components/task-status-filter/TaskStatusFilter.vue'
+import TaskTitleFilter from '@/components/task-title-filter/TaskTitleFilter.vue'
 import ToastNotification from '../components/toast-notification/ToastNotification.vue'
 import { fetchTasks, deleteTask, createTask } from '../services/TaskService'
 
@@ -16,6 +18,20 @@ const showDeleteModal = ref(false)
 const tasks = ref([])
 const loading = ref(false)
 const error = ref(null)
+
+const selectedStatus = ref('todos')
+const searchTerm = ref('')
+
+const filteredTasks = computed(() => {
+  const normalizedTerm = searchTerm.value.trim().toLowerCase()
+
+  return tasks.value.filter((task) => {
+    const matchesStatus = selectedStatus.value === 'todos' || task.status === selectedStatus.value
+    const title = task.title || ''
+    const matchesTitle = !normalizedTerm || title.toLowerCase().includes(normalizedTerm)
+    return matchesStatus && matchesTitle
+  })
+})
 
 // create task modal control (will be used later)
 const showCreateModal = ref(false)
@@ -131,6 +147,8 @@ onMounted(() => {
           <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>
           Crear tarea
         </button>
+        <TaskStatusFilter v-model="selectedStatus" />
+        <TaskTitleFilter v-model="searchTerm" />
       </div>
     </div>
 
@@ -149,7 +167,7 @@ onMounted(() => {
 
     <div v-else class="task-grid">
       <KanbanCard
-        v-for="task in tasks"
+        v-for="task in filteredTasks"
         :key="task.id"
         :id="task.id"
         :title="task.title"

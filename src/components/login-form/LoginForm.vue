@@ -156,3 +156,9 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 </script>
+
+<style scoped>
+.card {
+  max-height: 400px;
+}
+</style>

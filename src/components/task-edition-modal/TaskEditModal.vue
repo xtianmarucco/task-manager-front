@@ -1,4 +1,3 @@
-<!-- src/components/kanban/TaskEditModal.vue -->
 <template>
   <div class="modal fade" tabindex="-1" ref="modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -16,38 +15,76 @@
         <div class="modal-body">
           <form @submit.prevent="handleSubmit">
             <div class="mb-3">
-              <label class="form-label">Título</label>
-              <input type="text" class="form-control" v-model="task.title" required />
+              <label class="form-label">Título <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': formSubmitted && !task.title }"
+                v-model="task.title"
+              />
+              <div v-if="formSubmitted && !task.title" class="invalid-feedback d-block">
+                Este campo es obligatorio.
+              </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Descripción</label>
-              <textarea class="form-control" rows="3" v-model="task.description"></textarea>
+              <label class="form-label">Descripción <span class="text-danger">*</span></label>
+              <textarea
+                class="form-control"
+                :class="{ 'is-invalid': formSubmitted && !task.description }"
+                rows="3"
+                v-model="task.description"
+              ></textarea>
+              <div v-if="formSubmitted && !task.description" class="invalid-feedback d-block">
+                Este campo es obligatorio.
+              </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Tag</label>
-              <select class="form-select" v-model="task.tag">
+              <label class="form-label">Tag <span class="text-danger">*</span></label>
+              <select
+                class="form-select"
+                :class="{ 'is-invalid': formSubmitted && !task.tag }"
+                v-model="task.tag"
+              >
                 <option value="Design">Design</option>
                 <option value="Mobile">Mobile</option>
                 <option value="Development">Development</option>
                 <option value="QA">QA</option>
                 <option value="Docs">Docs</option>
               </select>
+              <div v-if="formSubmitted && !task.tag" class="invalid-feedback d-block">
+                Este campo es obligatorio.
+              </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Estado</label>
-              <select class="form-select" v-model="task.status">
+              <label class="form-label">Estado <span class="text-danger">*</span></label>
+              <select
+                class="form-select"
+                :class="{ 'is-invalid': formSubmitted && !task.status }"
+                v-model="task.status"
+              >
                 <option value="pendiente">Pendiente</option>
                 <option value="completada">Completada</option>
                 <option value="bloqueada">En proceso</option>
               </select>
+              <div v-if="formSubmitted && !task.status" class="invalid-feedback d-block">
+                Este campo es obligatorio.
+              </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Fecha límite</label>
-              <input type="date" class="form-control" v-model="task.dueDate" />
+              <label class="form-label">Fecha límite <span class="text-danger">*</span></label>
+              <input
+                type="date"
+                class="form-control"
+                :class="{ 'is-invalid': formSubmitted && !task.dueDate }"
+                v-model="task.dueDate"
+              />
+              <div v-if="formSubmitted && !task.dueDate" class="invalid-feedback d-block">
+                Este campo es obligatorio.
+              </div>
             </div>
 
             <div class="modal-footer">
@@ -57,6 +94,9 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                 Cancelar
               </button>
+            </div>
+            <div class="mt-2">
+              <small class="text-muted">* campos obligatorios</small>
             </div>
           </form>
         </div>
@@ -81,6 +121,8 @@ let instance = null
 const task = ref({})
 
 const isEditMode = computed(() => !!task.value.id)
+
+const formSubmitted = ref(false)
 
 const formatDateForInput = (value) => {
   if (!value) return ''
@@ -113,6 +155,18 @@ watch(
 )
 
 function handleSubmit() {
+  formSubmitted.value = true
+
+  if (
+    !task.value.title ||
+    !task.value.status ||
+    !task.value.dueDate ||
+    !task.value.description ||
+    !task.value.tag
+  ) {
+    return // No enviar si hay campos vacíos obligatorios
+  }
+
   const payload = {
     ...task.value,
     dueDate: task.value.dueDate || null,

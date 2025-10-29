@@ -9,7 +9,7 @@
     >
       <option value="todos">Todos</option>
       <option value="pendiente">Pendiente</option>
-      <option value="en progreso">En progreso</option>
+      <option value="bloqueada">En progreso</option>
       <option value="completada">Completada</option>
     </select>
   </div>

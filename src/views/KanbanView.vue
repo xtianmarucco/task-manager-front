@@ -130,7 +130,7 @@ onMounted(() => {
 
 <template>
   <Navbar />
-  <div class="p-4">
+  <div class="m-5">
     <div class="bg-light rounded p-4 mb-4 d-flex justify-content-between align-items-center">
       <div>
         <h4 class="mb-0">Task Manager</h4>

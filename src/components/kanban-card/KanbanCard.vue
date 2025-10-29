@@ -2,7 +2,7 @@
   <div
     ref="cardRef"
     class="bg-white border rounded shadow-sm p-3 d-flex flex-column position-relative"
-    style="max-height: 600px"
+    style="max-height: 250px"
   >
     <!-- Header: título + dropdown -->
     <div class="d-flex justify-content-between align-items-start mb-2">

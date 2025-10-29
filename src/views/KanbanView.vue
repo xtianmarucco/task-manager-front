@@ -8,6 +8,7 @@ import ConfirmModal from '../components/confirm-modal/ConfirmModal.vue'
 import TaskStatusFilter from '@/components/task-status-filter/TaskStatusFilter.vue'
 import TaskTitleFilter from '@/components/task-title-filter/TaskTitleFilter.vue'
 import ToastNotification from '../components/toast-notification/ToastNotification.vue'
+import Navbar from '../components/navbar/Navbar.vue'
 import { fetchTasks, deleteTask, createTask } from '../services/TaskService'
 
 const showEditModal = ref(false)
@@ -128,6 +129,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <Navbar />
   <div class="p-4">
     <div class="bg-light rounded p-4 mb-4 d-flex justify-content-between align-items-center">
       <div>

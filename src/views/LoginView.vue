@@ -1,5 +1,20 @@
 <script setup>
 import LoginForm from '../components/login-form/LoginForm.vue'
+import { useAuthStore } from '../stores/AuthStore'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const handleLogin = async ({ email, password }) => {
+  try {
+    await authStore.login(email, password)
+    router.push('/task-list')
+  } catch (error) {
+    alert('Credenciales inválidas o error de servidor.')
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -11,7 +26,7 @@ import LoginForm from '../components/login-form/LoginForm.vue'
 
       <div class="col-12 col-lg-5 bg-white d-flex align-items-center justify-content-center py-5">
         <div class="w-100 px-4 px-lg-5">
-          <LoginForm />
+          <LoginForm @submit="handleLogin" />
         </div>
       </div>
     </div>

@@ -102,9 +102,8 @@
 <script setup>
 import { reactive, ref } from 'vue'
 
-defineOptions({ name: 'LoginForm' })
+const emit = defineEmits(['submit'])
 
-// Reactive form fields plus validation helpers to mirror the old Options API logic.
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
@@ -120,10 +119,8 @@ const touched = reactive({
   password: false,
 })
 
-// Validation helpers toggle errores según reglas simples de email/password.
 const validateEmail = (setTouched = true) => {
   if (setTouched) touched.email = true
-
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!email.value) {
     errors.email = 'El email es obligatorio.'
@@ -136,7 +133,6 @@ const validateEmail = (setTouched = true) => {
 
 const validatePassword = (setTouched = true) => {
   if (setTouched) touched.password = true
-
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
   if (!password.value) {
     errors.password = 'La contraseña es obligatoria.'
@@ -152,10 +148,7 @@ const handleSubmit = () => {
   validatePassword()
 
   if (!errors.email && !errors.password) {
-    console.log('Email:', email.value)
-    console.log('Password:', password.value)
-    console.log('Remember:', remember.value)
-    // Aquí se puede enviar a backend
+    emit('submit', { email: email.value, password: password.value })
   }
 }
 

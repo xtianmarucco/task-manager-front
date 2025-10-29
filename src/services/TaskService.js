@@ -18,10 +18,26 @@ api.interceptors.request.use(
     error => Promise.reject(error)
 )
 
-export async function fetchTasks() {
-    const res = await api.get('/api/tasks')
-    return res.data
+// ✅ Función para construir query params dinámicamente
+function buildQueryParams(filters = {}) {
+    const params = new URLSearchParams()
+
+    if (filters.status) {
+        params.append('status', filters.status)
+    }
+    if (filters.title) {
+        params.append('title', filters.title)
+    }
+
+    return params.toString()
 }
+
+export async function fetchTasks(filters = {}) {
+    const query = buildQueryParams(filters)
+    const response = await api.get(`/api/tasks${query ? `?${query}` : ''}`)
+    return response.data
+}
+
 
 export async function deleteTask(id) {
     return await api.delete(`/api/tasks/${id}`)
